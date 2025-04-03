@@ -1,0 +1,17 @@
+{
+  "name": "json-server-challenge",
+  "version": "1.0.0",
+  "description": "API Mock para el Invera Frontend Challenge",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "json-server --watch db.json --port 8000"
+  },
+  "keywords": ["challenge", "frontend", "api", "mock"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "json-server": "^0.17.3"
+  }
+}
