@@ -1,0 +1,1 @@
+export const STATIC_QUERY_KEY_PREFIX = "static";

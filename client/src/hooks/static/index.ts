@@ -1,0 +1,1 @@
+export { useStatics } from "./useStatics";
