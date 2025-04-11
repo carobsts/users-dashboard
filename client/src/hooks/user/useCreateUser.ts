@@ -9,6 +9,7 @@ import { useUsers } from "./useUsers";
 const createUser = async (payload: CreateUserPayload) => {
   const { data } = await httpClient().post<UserSchema>(`/users`, {
     ...payload,
+    status: "Offline",
   });
 
   return data;
@@ -23,7 +24,7 @@ export const useCreateUser = () => {
       const usersQueryKey = useUsers.generateKey();
 
       queryClient.setQueryData<UserSchema[]>(usersQueryKey, (oldData) =>
-        !oldData ? oldData : [...oldData, { ...newUser, status: "Offline" }]
+        !oldData ? oldData : [...oldData, newUser]
       );
     },
   });
