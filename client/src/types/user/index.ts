@@ -1,1 +1,6 @@
-export type { UserSchema, UserTypeResponse, UserTypeSchema } from "./user";
+export type {
+  UserSchema,
+  UserTypeResponse,
+  UserTypeSchema,
+  CreateUserPayload,
+} from "./user";

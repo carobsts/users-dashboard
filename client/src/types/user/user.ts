@@ -20,4 +20,11 @@ interface UserTypeResponse {
   distribution: UserTypeSchema[];
 }
 
-export type { UserSchema, UserTypeResponse, UserTypeSchema };
+interface CreateUserPayload {
+  name: string;
+  phone: string;
+  location: string;
+  company: string;
+}
+
+export type { UserSchema, UserTypeResponse, UserTypeSchema, CreateUserPayload };
