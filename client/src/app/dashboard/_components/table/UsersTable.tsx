@@ -38,18 +38,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
 import {
   TooltipProvider,
   TooltipContent,
   TooltipTrigger,
   Tooltip,
 } from "@/components/ui/tooltip";
-
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -172,7 +171,18 @@ export const columns: ColumnDef<UserSchema>[] = [
     },
     cell: ({ row }) => (
       <div className="flex items-center space-x-2">
-        <div className="text-text-primary">{row.getValue("status")}</div>
+        {row.getValue("status") === "Online" ? (
+          <Badge
+            className="bg-[#063207] color-[#C3F5CD] border border-[#C3F5CD]"
+            variant="outline"
+          >
+            {row.getValue("status")}
+          </Badge>
+        ) : (
+          <Badge className="bg-muted" variant="outline">
+            {row.getValue("status")}
+          </Badge>
+        )}
       </div>
     ),
     enableSorting: true,
