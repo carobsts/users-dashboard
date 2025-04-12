@@ -116,7 +116,7 @@ export const ConfigUserDialog = ({ user, ...props }: CreateUserDialogProps) => {
                   <p className="text-sm text-text-primary">Phone</p>
                   <Input
                     {...register("phone")}
-                    type="phone"
+                    type="text"
                     placeholder="Phone"
                   />
                 </div>
