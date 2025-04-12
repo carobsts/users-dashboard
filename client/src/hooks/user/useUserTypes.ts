@@ -8,8 +8,9 @@ import { AxiosError } from "axios";
 
 import { httpClient } from "@/helpers/httpClient";
 
-import { USER_TYPE_QUERY_KEY_PREFIX } from "./constants";
 import { UserTypeResponse } from "@/types/user";
+
+import { USER_TYPE_QUERY_KEY_PREFIX } from "./constants";
 
 export const generateUserTypesQueryKey = () =>
   [USER_TYPE_QUERY_KEY_PREFIX, "userTypesList"] as const;
