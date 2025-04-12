@@ -21,7 +21,6 @@ export const HeaderSection = () => {
       </div>
 
       <ConfigUserDialog
-        mode="create"
         open={isOpenCreateUserDialog}
         onOpenChange={() => setIsOpenCreateUserDialog(false)}
       />
