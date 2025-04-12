@@ -3,4 +3,5 @@ export type {
   UserTypeResponse,
   UserTypeSchema,
   CreateUserPayload,
+  UpdateUserPayload,
 } from "./user";

@@ -1,10 +1,12 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import { FormProvider, useForm } from "react-hook-form";
 
-import { useCreateUser } from "@/hooks/user";
+import { UserSchema } from "@/types/user";
+
+import { useCreateUser, useUpdateUser } from "@/hooks/user";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -23,19 +25,19 @@ type FormValues = {
 };
 
 interface CreateUserDialogProps {
-  mode: "create" | "edit";
+  user?: UserSchema | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export const ConfigUserDialog = ({ mode, ...props }: CreateUserDialogProps) => {
+export const ConfigUserDialog = ({ user, ...props }: CreateUserDialogProps) => {
   const formRef = useRef<HTMLFormElement>(null);
 
   const defaultValues: FormValues = {
-    name: "",
-    phone: "",
-    location: "",
-    company: "",
+    name: user?.name || "",
+    phone: user?.phone || "",
+    location: user?.location || "",
+    company: user?.company || "",
   };
 
   const formData: FormValues = {
@@ -46,19 +48,35 @@ export const ConfigUserDialog = ({ mode, ...props }: CreateUserDialogProps) => {
     defaultValues: formData,
   });
 
-  const { register, handleSubmit } = formContext;
+  const { register, handleSubmit, reset } = formContext;
+
+  useEffect(() => {
+    if (user) {
+      reset({
+        name: user.name,
+        phone: user.phone,
+        location: user.location,
+        company: user.company,
+      });
+    }
+  }, [user, reset]);
 
   const createUserMutation = useCreateUser();
+  const updateUserMutation = useUpdateUser();
 
   // For some reason, the Sonner component isn't working and I haven't
   // had time to investigate why it's not triggering. That's why there's
   // no confirmation toast for success or error actions.
 
   const onSubmit = handleSubmit(async (values: FormValues) => {
-    if (mode === "create") {
-      await createUserMutation.mutateAsync(
+    if (user) {
+      await updateUserMutation.mutateAsync(
         {
-          ...values,
+          userId: user.id,
+          payload: {
+            ...values,
+            status: user.status,
+          },
         },
         {
           onSettled: () => {
@@ -67,16 +85,26 @@ export const ConfigUserDialog = ({ mode, ...props }: CreateUserDialogProps) => {
           },
         }
       );
+      return;
     }
+    await createUserMutation.mutateAsync(
+      {
+        ...values,
+      },
+      {
+        onSettled: () => {
+          formContext.reset();
+          props.onOpenChange(false);
+        },
+      }
+    );
   });
 
   return (
     <Dialog {...props}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            {mode === "create" ? "Create New User" : "Edit User"}
-          </DialogTitle>
+          <DialogTitle>{user ? "Edit User" : "Create New User"}</DialogTitle>
           <FormProvider {...formContext}>
             <form ref={formRef} onSubmit={onSubmit}>
               <div className="flex flex-col gap-4 my-4">
@@ -109,7 +137,7 @@ export const ConfigUserDialog = ({ mode, ...props }: CreateUserDialogProps) => {
                   />
                 </div>
                 <Button type="submit" className="w-full mt-4">
-                  {mode === "create" ? "Create User" : "Save Changes"}
+                  {user ? "Save Changes" : "Create User"}
                 </Button>
               </div>
             </form>

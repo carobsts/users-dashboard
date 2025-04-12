@@ -58,10 +58,13 @@ import {
 } from "@/components/ui/select";
 
 import { SortableHeader } from "./SortableHeader";
+import { ConfigUserDialog, DeleteUserDialog } from "../dialog";
 
 const PAGE_SIZE_OPTIONS = [5, 10, 25, 50, 100];
 
-export const columns: ColumnDef<UserSchema>[] = [
+export const getUserColumns = (
+  handleUserActions: (action: "edit" | "delete", user: UserSchema) => void
+): ColumnDef<UserSchema>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -191,12 +194,16 @@ export const columns: ColumnDef<UserSchema>[] = [
   {
     id: "actions",
     enableHiding: false,
-    cell: () => {
+    cell: ({ row }) => {
       return (
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="link" type="button">
+              <Button
+                variant="link"
+                type="button"
+                onClick={() => handleUserActions("edit", row.original)}
+              >
                 <div className="text-text-primary">
                   <Pencil size={16} weight="fill" />
                 </div>
@@ -206,7 +213,11 @@ export const columns: ColumnDef<UserSchema>[] = [
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="link" type="button">
+              <Button
+                variant="link"
+                type="button"
+                onClick={() => handleUserActions("delete", row.original)}
+              >
                 <div className="text-text-primary">
                   <Trash size={16} weight="fill" />
                 </div>
@@ -225,6 +236,25 @@ export const UsersTable = () => {
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
+
+  const [selectedUser, setSelectedUser] = useState<UserSchema | null>(null);
+
+  const [isOpenUpdateUserDialog, setIsOpenUpdateUserDialog] = useState(false);
+  const [isOpenDeleteUserDialog, setIsOpenDeleteUserDialog] = useState(false);
+
+  const handleUserActions = (action: "edit" | "delete", user: UserSchema) => {
+    setSelectedUser(user);
+
+    if (action === "delete") {
+      setIsOpenDeleteUserDialog(true);
+    }
+
+    if (action === "edit") {
+      setIsOpenUpdateUserDialog(true);
+    }
+  };
+
+  const columns = getUserColumns(handleUserActions);
 
   const table = useReactTable({
     data: users || [],
@@ -246,116 +276,130 @@ export const UsersTable = () => {
   }
 
   return (
-    <div className="w-full">
-      <Card className="pt-6">
-        <div className="flex items-center py-2 gap-6 px-10">
-          <h2 className="text-foreground text-lg font-semibold">All Users</h2>
-          <Input
-            icon={<MagnifyingGlass />}
-            placeholder="Search for..."
-            value={table.getState().globalFilter ?? ""}
-            onChange={(event) => table.setGlobalFilter(event.target.value)}
-            className="w-[20rem] sm:w-full"
-          />
-        </div>
-        <div className="rounded-md border min-h-[600px]">
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead key={header.id}>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                      </TableHead>
-                    );
-                  })}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    No results.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      </Card>
-
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-text-secondary">
-          {`${table.getFilteredSelectedRowModel().rows.length} of ${
-            table.getFilteredRowModel().rows.length
-          } row(s) selected.`}
-        </div>
-        <div className="flex items-center gap-8">
-          <div className="flex items-center gap-2">
-            <span className="text-sm">Rows per page:</span>
-            <Select
-              value={String(table.getState().pagination.pageSize)}
-              onValueChange={(value) => table.setPageSize(Number(value))}
-            >
-              <SelectTrigger className="w-[80px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {PAGE_SIZE_OPTIONS.map((option) => (
-                  <SelectItem key={option} value={String(option)}>
-                    {option}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+    <>
+      <div className="w-full">
+        <Card className="pt-6">
+          <div className="flex items-center py-2 gap-6 px-10">
+            <h2 className="text-foreground text-lg font-semibold">All Users</h2>
+            <Input
+              icon={<MagnifyingGlass />}
+              placeholder="Search for..."
+              value={table.getState().globalFilter ?? ""}
+              onChange={(event) => table.setGlobalFilter(event.target.value)}
+              className="w-[20rem] sm:w-full"
+            />
           </div>
-          <div className="flex items-center gap-2">
-            <Button
-              className="text-primary font-bold"
-              variant="outline"
-              size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              <ArrowLeft size={20} />
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              <ArrowRight />
-            </Button>
+          <div className="rounded-md border min-h-[600px]">
+            <Table>
+              <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => {
+                      return (
+                        <TableHead key={header.id}>
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                        </TableHead>
+                      );
+                    })}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {table.getRowModel().rows?.length ? (
+                  table.getRowModel().rows.map((row) => (
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && "selected"}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-24 text-center text-text-secondary"
+                    >
+                      No results.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </Card>
+
+        <div className="flex items-center justify-end space-x-2 py-4">
+          <div className="flex-1 text-sm text-text-secondary">
+            {`${table.getFilteredSelectedRowModel().rows.length} of ${
+              table.getFilteredRowModel().rows.length
+            } row(s) selected.`}
+          </div>
+          <div className="flex items-center gap-8">
+            <div className="flex items-center gap-2">
+              <span className="text-sm">Rows per page:</span>
+              <Select
+                value={String(table.getState().pagination.pageSize)}
+                onValueChange={(value) => table.setPageSize(Number(value))}
+              >
+                <SelectTrigger className="w-[80px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {PAGE_SIZE_OPTIONS.map((option) => (
+                    <SelectItem key={option} value={String(option)}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                className="text-primary font-bold"
+                variant="outline"
+                size="sm"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+              >
+                <ArrowLeft size={20} />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+              >
+                <ArrowRight />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+
+      <ConfigUserDialog
+        open={isOpenUpdateUserDialog}
+        user={selectedUser}
+        onOpenChange={() => setIsOpenUpdateUserDialog(false)}
+      />
+
+      <DeleteUserDialog
+        open={isOpenDeleteUserDialog}
+        user={selectedUser}
+        onOpenChange={() => setIsOpenDeleteUserDialog(false)}
+      />
+    </>
   );
 };

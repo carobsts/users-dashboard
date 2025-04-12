@@ -27,4 +27,14 @@ interface CreateUserPayload {
   company: string;
 }
 
-export type { UserSchema, UserTypeResponse, UserTypeSchema, CreateUserPayload };
+interface UpdateUserPayload extends CreateUserPayload {
+  status: string;
+}
+
+export type {
+  UserSchema,
+  UserTypeResponse,
+  UserTypeSchema,
+  CreateUserPayload,
+  UpdateUserPayload,
+};
