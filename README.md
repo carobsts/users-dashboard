@@ -95,7 +95,7 @@ docker-compose up --build
 ```
 
 - **Frontend** available at:  `http://localhost:3000`
-- **Mock API** available at: `http://localhost:8000`
+- **Mock API** available at: `http://0.0.0.0:8000`
 
 To stop and remove containers:
 ```bash
