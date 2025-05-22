@@ -91,7 +91,7 @@ cd users-dashboard
 ### Docker Compose
 Build and start both services:
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 - **Frontend** available at:  `http://localhost:3000`
@@ -99,7 +99,7 @@ docker-compose up --build
 
 To stop and remove containers:
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ---
@@ -133,9 +133,9 @@ Mock API endpoints served by json-server:
 
 1. **Code Changes**: Modify code in `server/` or `client/` locally.
 2. **Live Reload**:
-   - Server: `docker-compose up --build` picks up changes in `server` (volume-mounted).
+   - Server: `docker compose up --build` picks up changes in `server` (volume-mounted).
    - Client: Next.js hot reload inside Docker via `CHOKIDAR_USEPOLLING=true`.
-3. **Linting**: `docker-compose exec client npm run lint`.
+3. **Linting**: `docker compose exec client npm run lint`.
 
 ---
 
