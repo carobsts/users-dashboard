@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   title: "Dashboard - Usuarios",
   icons: {
     icon: {
-      url: "https://invera.io/invera-favicon.png",
+      url: "https://media.flaticon.com/dist/min/img/apple-icon-58x58.png",
       type: "image/x-icon",
     },
   },

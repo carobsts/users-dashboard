@@ -1,1 +1,0 @@
-En este directorio debes crear la aplicación de Frontend

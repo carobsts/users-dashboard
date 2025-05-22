@@ -1,13 +1,13 @@
 {
-  "name": "json-server-challenge",
+  "name": "json-server",
   "version": "1.0.0",
-  "description": "API Mock para el Invera Frontend Challenge",
+  "description": "API Mock",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "json-server --watch db.json --port 8000"
+    "dev": "json-server --watch db.json --port 8000 --host 0.0.0.0"
   },
-  "keywords": ["challenge", "frontend", "api", "mock"],
+  "keywords": ["frontend", "api", "mock"],
   "author": "",
   "license": "ISC",
   "dependencies": {

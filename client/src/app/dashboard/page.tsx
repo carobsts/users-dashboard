@@ -13,7 +13,7 @@ import { DashboardView } from "./_components";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "Invera - Dashboard",
+    title: "Users - Dashboard",
     description: "This is the dashboard page",
   };
 }
